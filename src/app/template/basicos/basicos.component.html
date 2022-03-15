@@ -1,0 +1,138 @@
+<h2>Template: <small>Básicos</small></h2>
+<hr />
+
+<div class="row">
+    <div class="col">
+        <!-- 
+            Si no estuviesemos usando el ViewChild para recoger #miFormulario, tendríamos que pasárselo al guardar() si quisiéramos
+            trabajar con él desde el componente 
+        -->
+        <form (ngSubmit)="guardar()" #miFormulario="ngForm" autocomplete="off">
+            <!-- Campo de producto -->
+            <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Producto</label>
+                <div class="col-sm-9">
+                    <input type="text" 
+                           [ngModel]="initForm.producto" 
+                           name="producto" 
+                           class="form-control" 
+                           placeholder="Nombre del producto"
+                           minlength="3" 
+                           required>
+                    
+                    <!-- 
+                        Para chequear desde el template si el campo 'producto' del formulario tiene algún error y ya ha sido tocado 
+                        hay varias formas. Una es ésta:
+                        Nótese que le ponemos un '?' porque miFormulario.controls.producto no va a existir hasta que el formulario no se haya
+                        renderizado por completo por lo que si no le ponemos el '?' cuando llegue a esta línea de código y se ejecute, me
+                        va a saltar un error javascript en la condola del navegador.
+
+                        Al final, el inconveniente que tenemos al hacerlo de esta forma es que si tenemos que repetir toda esta lógica
+                        para cado uno de los campos del formulario al final nos puede quedar un código difícil de leer y una plantilla
+                        muy tocha. 
+                    -->
+
+                    <!-- 
+                        Vamos a dejar esto comentado porque vamos a hacer las validaciones desde el componente usando el formulario recogido
+                        con elViewChild
+                        
+                        <span class="form-text text-danger" 
+                            *ngIf="miFormulario.controls.producto?.invalid && miFormulario.controls.producto?.touched">
+                            Debe de ser de 3 letras
+                        </span>
+                    -->
+                    <span class="form-text text-danger" *ngIf="validarProducto()">
+                        Debe de ser de 3 letras
+                    </span>
+                </div>
+            </div>
+
+            <!-- Campo de precio -->
+            <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Precio</label>
+                <div class="col-sm-9">
+                    <input type="number" 
+                           [ngModel]="initForm.precio" 
+                           name="precio" 
+                           class="form-control" 
+                           placeholder="Precio del producto" 
+                           min="0" 
+                           required
+                    >
+
+                    <span class="form-text text-danger" *ngIf="validarPrecio()">
+                        El precio debe de ser 0 o mayor
+                    </span>
+                </div>
+            </div>
+
+            <!-- Campo de existencias -->
+            <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Existencias</label>
+                <div class="col-sm-9">
+                    <!-- 
+                        Vamos a usar una directiva personalizada que nos hemos creado para controlar la validación de que las existencias 
+                        sean >0 (customMin).
+                        OJO CON ESTO: Si el [minimo] lo pasamos sin los corchetes, entonces coge las comillas y toma el 0 como un string.
+                                      Por eso es que se lo pasamos dentro de los corchetes, para que lo pase como un number
+                                      [minimo]="0"  => number
+                                      minimo="0"    => string
+                    -->
+                    <input type="number" 
+                           [ngModel]="initForm.existencias" 
+                           name="existencias" 
+                           class="form-control"
+                           customMin
+                           [minimo]="0"
+                           placeholder="Existencias del producto"
+                           required
+                    >
+
+                    <span class="form-text text-danger" *ngIf="validarExistencias()">
+                        Las existencias deben de ser 0 o mayor
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <button type="submit" class="btn btn-primary float-end" [disabled]="miFormulario.invalid">
+                        Guardar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col">
+        <!-- 
+            Curiosidad: Si en nuestro formulario no ponemos ningún campo como required, esta propiedad devolverá un válido siempre aunque
+                        los campos estén vacíos.
+                        En el momento en que pongamos un required esto ya devolverá true/false en función si se pasa esa validación.
+                        También podemos añadir reglas de validación al formulario con atributos html como el min="0" del precio 
+                        (para que no sea negativo), o el minlength="3" del nombre del producto.
+        -->
+        <span>Valid</span>
+        <pre>{{ miFormulario.valid }}</pre>
+        
+        <!-- 
+            Pristine devuelve true si no se han cambiado los valores con los que se presenta el formulario cuando se carga. 
+            En el momento en que hagamos algún cambio en algún campo del formulario, aunque luego lo volvamos a dejar igual que estaba antes, 
+            este pristine ya devuelve un false
+        -->
+        <span>Pristine</span>
+        <pre>{{ miFormulario.pristine }}</pre>
+        
+        <span>Touched</span>
+        <pre>{{ miFormulario.touched }}</pre>
+        
+        <span>Value</span>
+        <pre>{{ miFormulario.value | json }}</pre>
+        
+        <span>CustomMinDirective Errors</span>
+        <pre>{{ miFormulario.controls.existencias?.errors | json }}</pre>
+    </div>
+</div>

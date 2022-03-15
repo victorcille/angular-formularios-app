@@ -1,0 +1,79 @@
+<h2>Reactivos: <small>Dinámicos</small></h2>
+<hr />
+
+<form autocomplete="off" [formGroup]="miFormulario">
+    <!-- Nombre -->
+    <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label">Nombre</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" placeholder="Nombre de la persona" formControlName="nombre">
+
+            <span class="form-text text-danger" *ngIf="campoEsInvalido( 'nombre' )">
+                Este campo es obligatorio
+            </span>
+        </div>
+    </div>
+
+    <!-- Agregar favorito -->
+    <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label">Agregar</label>
+        <div class="col-sm-9">
+            <div class="input-group">
+                <input type="text"
+                       class="form-control" 
+                       placeholder="Agregar favorito" 
+                       [formControl]="nuevoFavorito" 
+                       (keyup.enter)="agregarFavorito()"
+                >
+
+                <button type="button" class="btn btn-outline-primary" (click)="agregarFavorito()">Agregar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de juegos favoritos -->
+    <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label">Favoritos</label>
+
+        <!-- 
+            Como este div es el contenedor de los inputs que vamos a utilizar para mostrar los favoritos, le debemos colocar el formArrayName  
+        -->
+        <div class="col-sm-9" formArrayName="favoritos">
+            <!-- 
+                Para hacer el ngFor que me saque los elementos del array de favoritos debemos hacerlo así:
+                Usamos el getter que nos hemos creado y su propiedad .controls
+                IMPORTANTE: sacar el index del elemento para luego pasárselo al input con el formControlName entre corchetes
+            -->
+            <div class="input-group mb-1" *ngFor="let favorito of favoritosArray.controls; let i = index">
+                <input type="text" class="form-control" [formControlName]="i">
+
+                <button type="button" class="btn btn-outline-danger" (click)="borrarFavorito(i)">Borrar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <button type="button" class="btn btn-primary float-end" (click)="guardar()">
+                Guardar
+            </button>
+        </div>
+    </div>
+</form>
+
+<span>Valid</span>
+<pre>{{ miFormulario.valid }}</pre>
+<br />
+
+<span>miFormulario Value</span>
+<pre>{{ miFormulario.value | json }}</pre>
+<br />
+
+<span>nuevoFavorito Valid</span>
+<pre>{{ nuevoFavorito.valid }}</pre>
+<br />
+
+<span>nuevoFavorito Value</span>
+<pre>{{ nuevoFavorito.value | json }}</pre>
+<br />

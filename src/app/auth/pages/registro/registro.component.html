@@ -1,0 +1,151 @@
+<h2>Validaciones Reactivas</h2>
+<hr />
+
+<div class="row">
+    <div class="col">
+        <form (ngSubmit)="guardar()" autocomplete="off" [formGroup]="miFormulario">
+            <!-- Nombre -->
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Nombre</label>
+
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" placeholder="Nombre del usuario" formControlName="nombre">
+
+                    <span class="form-text text-danger" *ngIf="campoEsInvalido('nombre')">
+                        Debe de ser en formato de nombre y apellido
+                    </span>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Email</label>
+
+                <div class="col-sm-9">
+                    <input type="email" class="form-control" placeholder="Email del usuario" formControlName="email">
+
+                    <!-- Para mostrar errores dependiendo de su casuística hay varias maneras -->
+
+                    <!-- OPCIÓN 1
+                    <span class="form-text text-danger" *ngIf="emailRequired()">
+                        El correo es obligatorio
+                    </span>
+
+                    <span class="form-text text-danger" *ngIf="emailNotPattern()">
+                        El valor introducido no parece un correo...
+                    </span>
+                    
+                    <span class="form-text text-danger" *ngIf="emailRepeated()">
+                        El email está repetido
+                    </span> 
+                    -->
+
+                    <!-- OPCIÓN 2: usar el getter msgErrorEmail definido en el componente -->
+                    <span class="form-text text-danger" *ngIf="campoEsInvalido('email')">
+                        {{ msgErrorEmail }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Username -->
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Username</label>
+
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" placeholder="Nombre código del usuario" formControlName="username">
+
+                    <span class="form-text text-danger" *ngIf="campoEsInvalido('username')">
+                        El username no puede ser 'Strider'
+                    </span>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Password</label>
+
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" placeholder="Password de su cuenta" formControlName="password">
+
+                    <span class="form-text text-danger" *ngIf="campoEsInvalido('password')">
+                        La contraseña debe tener 6 caracteres como mínimo
+                    </span>
+                </div>
+            </div>
+
+            <!-- Password2 -->
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Confirmar</label>
+
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" placeholder="Confirmar la password de su cuenta" formControlName="password2">
+
+                    <span class="form-text text-danger" *ngIf="campoEsInvalido('password2')">
+                        Las contraseñas deben ser iguales
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-primary float-end" [disabled]="miFormulario.invalid || miFormulario.pending">
+                        Crear
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<h4>Form Valid</h4>
+<pre>{{ miFormulario.valid }}</pre>
+<br />
+
+<h4>Form Status</h4>
+<pre>{{ miFormulario.status }}</pre>
+<br />
+
+<!-- 
+    Los formularios reactivos tienen 3 estados: Válidos, Invalidos y pendientes de validación
+    
+    Con el {{ miFormulario.status }} vamos a ver que el status va a devolver un "pending" si hay alguna validación pendiente de realizarse 
+    (para ello vamos a usar un delay en la validación asíncrona del email).
+
+    Una vez que ya haya pasado TODAS LAS VALIDACIONES, el status será valid/invalid
+    
+    Es importante controlar esto si por ejemplo tenemos validaciones asíncronas que hacen peticiones http a un api (como es este caso) 
+    porque puede ser que la conexión del usuario no sea buena y tarden en hacerse. 
+    
+    Por lo tanto, para estos casos habrá que bloquear el botón de submit o hacer algo para que sólo se permita enviar el formulario cuando 
+    su estado sea válido y no pending ni invalid
+-->
+
+<h4>Pending</h4>
+<pre>{{ miFormulario.pending }}</pre>
+<br />
+
+<h4>Form Errors</h4>
+<pre>{{ miFormulario.errors | json }}</pre>
+<br />
+
+<h4>Nombre errores</h4>
+<pre>{{ miFormulario.controls.nombre.errors | json }}</pre>
+<br />
+
+<h4>Email errores</h4>
+<pre>{{ miFormulario.controls.email.errors | json }}</pre>
+<br />
+
+<h4>Username errores</h4>
+<pre>{{ miFormulario.controls.username.errors | json }}</pre>
+<br />
+
+<h4>Password</h4>
+<pre>{{ miFormulario.controls.password.errors | json }}</pre>
+<br />
+
+<h4>Password2</h4>
+<pre>{{ miFormulario.controls.password2.errors | json }}</pre>
+<br />
